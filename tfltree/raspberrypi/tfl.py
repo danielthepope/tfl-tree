@@ -20,11 +20,12 @@ class TflApi:
             response_text = response.text
             self.status = json.loads(response_text)
             log.info('Loaded status successfully')
-            now = strftime('%Y%m%d_%H%M%S')
-            (fd, path) = mkstemp('.json', 'tfltree_api_%s_' % now)
-            with open(fd, 'w') as f:
-                f.write(response_text)
-                log.debug('Wrote API response to %s' % path)
+            if self.has_status_changed():
+                now = strftime('%Y%m%d_%H%M%S')
+                (fd, path) = mkstemp('.json', 'tfltree_api_%s_' % now)
+                with open(fd, 'w') as f:
+                    f.write(response_text)
+                    log.debug('Wrote API response to %s' % path)
         else:
             log.warn('Received status %s from API. Returning previous one' % response.status_code)
         return self.status
