@@ -1,6 +1,8 @@
 import json
 import logging as log
 import requests
+from time import strftime
+from tempfile import mkstemp
 
 class TflApi:
     url = ''
@@ -15,8 +17,14 @@ class TflApi:
         response = requests.get(self.url)
         if response.status_code == 200:
             self._previous_status = self.status
-            self.status = json.loads(response.text)
+            response_text = response.text
+            self.status = json.loads(response_text)
             log.info('Loaded status successfully')
+            now = strftime('%Y%m%d_%H%M%S')
+            (fd, path) = mkstemp('.json', 'tfltree_api_%s_' % now)
+            with open(fd, 'w') as f:
+                f.write(response_text)
+                log.debug('Wrote API response to %s' % path)
         else:
             log.warn('Received status %s from API. Returning previous one' % response.status_code)
         return self.status
@@ -26,7 +34,8 @@ class TflApi:
 
 
 if __name__ == '__main__':
+    log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.DEBUG)
     API = TflApi()
     status = API.update_status()
-    print(status)
+    log.debug(status)
 
