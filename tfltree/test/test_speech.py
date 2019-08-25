@@ -25,6 +25,20 @@ def test_phrase_generator_night_tube():
     ]
 
 
+def test_many_disruptions():
+    assert speech.generate_phrases_for_status(api_helper.MANY_DISRUPTIONS) == [
+        "There are severe delays on the Bakerloo Line. Minor delays between Queen's Park and Harrow and Wealdstone due to an earlier fire alert at Kilburn High Road. ",
+        "There are severe delays on the Central Line. Severe delays between Leytonstone and Epping and Woodford via Hainault and Newbury Park and MINOR DELAYS on the rest of the line, while we fix a signal failure at Leytonstone. Tickets will be accepted on London Buses, Greater Anglia via any reasonable route and Chiltern Railways between West Ruislip and Marylebone. ",
+        "There are minor delays on the Central Line. Severe delays between Leytonstone and Epping and Woodford via Hainault and Newbury Park and MINOR DELAYS on the rest of the line, while we fix a signal failure at Leytonstone. Tickets will be accepted on London Buses, Greater Anglia via any reasonable route and Chiltern Railways between West Ruislip and Marylebone. ",
+        "There are severe delays on the District Line. Severe delays between Wimbledon and Edgware Road and Minor delays between Earl's Court and Richmond / Ealing Broadway due to an earlier signal failure at Earl's Court, your tickets will be accepted on the buses. ",
+        "There are minor delays on the District Line. Severe delays between Wimbledon and Edgware Road and Minor delays between Earl's Court and Richmond / Ealing Broadway due to an earlier signal failure at Earl's Court, your tickets will be accepted on the buses. ",
+        'There is a partial closure on the Metropolitan Line. Saturday 24, Sunday 25 and Bank Holiday Monday 26 August, no service between Rayners Lane and Uxbridge. Replacement buses operate.',
+        'There is a partial closure on the Piccadilly Line. Saturday 24, Sunday 25 and Bank Holiday Monday 26 August, no service between Rayners Lane and Uxbridge. Replacement buses operate.',
+        'The Waterloo & City Line is closed. The service will resume again at 08:00 on Monday. ',
+        'There is a good service on all other lines.'
+    ]
+
+
 def test_remove_line_name():
     actual = speech._remove_line_name_from_reason('PICCADILLY LINE: No service between Rayners Lane and Uxbridge.')
     assert actual == 'No service between Rayners Lane and Uxbridge.'
