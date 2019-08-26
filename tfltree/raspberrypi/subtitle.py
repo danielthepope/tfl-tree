@@ -1,11 +1,9 @@
 import logging as log
 from tempfile import mkstemp
-from time import strftime
 
 
-def convert_to_srt_file(audio_files):
-    timestamp = strftime('%Y%m%d_%H%M%S')
-    (fd, path) = mkstemp('.srt', 'tfltree_%s' % timestamp)
+def convert_to_srt_file(audio_files, timestamp):
+    (_, path) = mkstemp('.srt', 'tfltree_%s' % timestamp)
     srt_text = _convert_to_srt_text(audio_files)
     with open(path, 'w') as file:
         file.write(srt_text)

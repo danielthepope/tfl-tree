@@ -1,6 +1,6 @@
 import logging as log
 import picamera
-from time import sleep, strftime
+from time import sleep
 from tempfile import mkstemp
 from tfltree import timeit
 from tfltree.raspberrypi.led import RecordingLight
@@ -21,10 +21,9 @@ class Camera:
         log.debug('Camera warmed up')
 
     @timeit
-    def record_for_seconds(self, seconds):
-        now = strftime('%Y%m%d_%H%M%S')
-        (h264_descriptor, h264_path) = self._record_h264(seconds, now)
-        (mp4_descriptor, mp4_path) = self._postprocess(h264_path, now)
+    def record_for_seconds(self, seconds, timestamp):
+        (_, h264_path) = self._record_h264(seconds, timestamp)
+        (_, mp4_path) = self._postprocess(h264_path, timestamp)
         return mp4_path
 
     @timeit

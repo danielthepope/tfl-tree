@@ -12,7 +12,7 @@ class TflApi:
     def __init__(self, url='https://api.tfl.gov.uk/line/mode/tube/status'):
         self.url = url
 
-    def update_status(self):
+    def update_status(self, timestamp=strftime('%Y%m%d_%H%M%S')):
         log.info('Updating status from %s' % self.url)
         response = requests.get(self.url)
         if response.status_code == 200:
@@ -21,8 +21,7 @@ class TflApi:
             self.status = json.loads(response_text)
             log.info('Loaded status successfully')
             if self.has_status_changed():
-                now = strftime('%Y%m%d_%H%M%S')
-                (fd, path) = mkstemp('.json', 'tfltree_api_%s_' % now)
+                (fd, path) = mkstemp('.json', 'tfltree_api_%s_' % timestamp)
                 with open(fd, 'w') as f:
                     f.write(response_text)
                     log.debug('Wrote API response to %s' % path)
