@@ -7,7 +7,7 @@ def test_srt_generation():
     assert actual == expected
 
 def test_srt_fragment():
-    expected = '3\n00:01:04,345 --> 00:01:24,172\nThere are minor delays on the Central Line.\n\n'
+    expected = '3\n00:01:04,345 --> 00:01:24,172\nThere are minor delays on the\nCentral Line.\n\n'
     actual = subtitle._create_srt_fragment(3, 64345, 19827, 'There are minor delays on the Central Line.')
     assert actual == expected
 
