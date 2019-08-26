@@ -3,7 +3,7 @@ from tempfile import mkstemp
 
 
 def convert_to_srt_file(audio_files, timestamp):
-    (_, path) = mkstemp('.srt', 'tfltree_%s' % timestamp)
+    (_, path) = mkstemp('.srt', 'tfltree_%s_' % timestamp)
     srt_text = _convert_to_srt_text(audio_files)
     with open(path, 'w') as file:
         file.write(srt_text)

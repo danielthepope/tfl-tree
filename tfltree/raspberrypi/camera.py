@@ -21,8 +21,7 @@ class Camera:
     @timeit
     def record_for_seconds(self, seconds, timestamp):
         (_, h264_path) = self._record_h264(seconds, timestamp)
-        (_, mp4_path) = self._postprocess(h264_path, timestamp)
-        return mp4_path
+        return h264_path
 
     @timeit
     def _record_h264(self, seconds, timestamp):
@@ -33,13 +32,4 @@ class Camera:
         self.camera.stop_recording()
         status_light.off()
         log.debug('Saved video to %s' % path)
-        return (fd, path)
-
-    @timeit
-    def _postprocess(self, h264_path, timestamp):
-        (fd, path) = mkstemp('.mp4', 'tfltree_video_%s_' % timestamp)
-        status_light.blink()
-        subprocess.check_output(['MP4Box', '-fps', '30', '-add', h264_path, path], stderr=subprocess.STDOUT)
-        log.debug('Packaged MP4 at %s' % path)
-        status_light.off()
         return (fd, path)
