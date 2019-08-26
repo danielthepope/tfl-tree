@@ -1,8 +1,9 @@
 from time import sleep, strftime
 from tfltree.raspberrypi.camera import Camera
 from tfltree.raspberrypi.tfl import TflApi
-import tfltree.raspberrypi.speech as speech
-import tfltree.raspberrypi.subtitle as subtitle
+from tfltree.raspberrypi import speech
+from tfltree.raspberrypi import status_light
+from tfltree.raspberrypi import subtitle
 from tempfile import mkstemp
 import logging as log
 
@@ -38,6 +39,7 @@ def main():
             log.info('Total duration: %sms' % total_duration)
             subtitle_file = subtitle.convert_to_srt_file(audio_files, timestamp)
             video_file = camera.record_for_seconds(total_duration/1000, timestamp)
+            status_light.blink(0.02, 10)
         else:
             log.debug('Status is the same')
 
