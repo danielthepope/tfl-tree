@@ -19,31 +19,34 @@ def handle(event, context):
     log.info(parsed_message)
     in_video_file = _download_to_temp_file(parsed_message['video'])
     in_audio_files = [_download_to_temp_file(key) for key in parsed_message['audio']]
-    out_video_file = run_ffmpeg(in_video_file, in_audio_files)
+    in_subtitle_file = _download_to_temp_file(parsed_message['subtitle'])
+    out_video_file = run_ffmpeg(in_video_file, in_audio_files, in_subtitle_file)
     now = strftime('%Y%m%d_%H%M%S')
     destination_key = _upload_to_s3(out_video_file, now)
     return destination_key
 
 
-def run_ffmpeg(video_file, audio_files):
+def run_ffmpeg(video_file, audio_files, subtitle_file):
     (fd, filename) = mkstemp('.mp4')
-    command = _generate_ffmpeg_command(video_file, audio_files, filename)
+    command = _generate_ffmpeg_command(video_file, audio_files, subtitle_file, filename)
     log.debug('Command: %s' % command)
     try:
-        ffmpeg_output = subprocess.check_output(command, stderr=subprocess.STDOUT)
+        subprocess.check_output(command, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         log.error('Failed to call ffmpeg')
         log.error(e.output)
     return filename
 
 
-def _generate_ffmpeg_command(video_file, audio_files, filename):
+def _generate_ffmpeg_command(video_file, audio_files, subtitle_file, filename):
     command = ['./ffmpeg', '-y', '-r', '30', '-i', video_file]
     for f in audio_files:
         command += ['-i', f]
     command.append('-filter_complex')
     command.append(_generate_filter(audio_files, 1, 'outa'))
-    command += ['-map', '0:0', '-map', '[outa]', '-c:v', 'copy', '-c:a', 'mp3', filename]
+    command += ['-map', '0:0', '-map', '[outa]']
+    command += ['-vf', 'subtitles=%s' % subtitle_file]
+    command += ['-c:a', 'mp3', filename]
     return command
 
 
