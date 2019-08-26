@@ -1,11 +1,25 @@
-def convert_to_srt(audio_files):
+import logging as log
+from tempfile import mkstemp
+from time import strftime
+
+
+def convert_to_srt_file(audio_files):
+    timestamp = strftime('%Y%m%d_%H%M%S')
+    (fd, path) = mkstemp('.srt', 'tfltree_%s' % timestamp)
+    srt_text = _convert_to_srt_text(audio_files)
+    with open(path, 'w') as file:
+        file.write(srt_text)
+    log.debug('Written subtitle file to %s' % path)
+    return path
+
+def _convert_to_srt_text(audio_files):
     # audio_files is an array of dictionaries.
     # duration (milliseconds) and phrase are important fields here
     output = ''
     start = 0
     fragments = []
     for file in audio_files:
-        fragments += split_file_into_fragments(file)
+        fragments += _split_file_into_fragments(file)
     for index, fragment in enumerate(fragments):
         output += _create_srt_fragment(index + 1, start, fragment['duration'], fragment['phrase'])
         start += fragment['duration']
@@ -14,7 +28,7 @@ def convert_to_srt(audio_files):
 
 CHARACTERS_PER_FRAGMENT = 64
 
-def split_file_into_fragments(audio_file):
+def _split_file_into_fragments(audio_file):
     fragments = [{'phrase': ''}]
     total_duration = audio_file['duration']
     words = audio_file['phrase'].strip().split(' ')

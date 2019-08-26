@@ -3,7 +3,7 @@ import tfltree.test.audio_helper as audio_helper
 
 def test_srt_generation():
     expected = open('tfltree/test/fixtures/many_issues.srt', 'r').read()
-    actual = subtitle.convert_to_srt(audio_helper.AUDIO_FILES)
+    actual = subtitle._convert_to_srt_text(audio_helper.AUDIO_FILES)
     assert actual == expected
 
 def test_srt_fragment():

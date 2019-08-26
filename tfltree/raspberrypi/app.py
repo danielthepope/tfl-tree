@@ -2,6 +2,7 @@ from time import sleep, strftime
 from tfltree.raspberrypi.camera import Camera
 from tfltree.raspberrypi.tfl import TflApi
 import tfltree.raspberrypi.speech as speech
+import tfltree.raspberrypi.subtitle as subtitle
 from tempfile import mkstemp
 import logging as log
 
@@ -35,7 +36,8 @@ def main():
             audio_files = generate_audio_files(status)
             total_duration = sum([f['duration'] for f in audio_files])
             log.info('Total duration: %sms' % total_duration)
-            camera.record_for_seconds(total_duration/1000)
+            subtitle_file = subtitle.convert_to_srt_file(audio_files)
+            video_file = camera.record_for_seconds(total_duration/1000)
         else:
             log.debug('Status is the same')
 
