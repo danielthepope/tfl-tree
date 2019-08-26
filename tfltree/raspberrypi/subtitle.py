@@ -65,7 +65,7 @@ def _create_srt_fragment(index, start, duration, text):
     srt_text = ''
     for line in srt_lines:
         srt_text += line.strip() + '\n'
-    return f'{index}\n{start_timestamp} --> {end_timestamp}\n{srt_text}\n'
+    return '%s\n%s --> %s\n%s\n' % (index, start_timestamp, end_timestamp, srt_text)
 
 MILLIS_IN_HOUR = 3600000
 MILLIS_IN_MINUTE = 60000
@@ -76,4 +76,4 @@ def _convert_ms_to_timestamp(millis):
     minutes = int((millis % MILLIS_IN_HOUR) / MILLIS_IN_MINUTE)
     seconds = int((millis % MILLIS_IN_MINUTE) / MILLIS_IN_SECOND)
     ms = millis % MILLIS_IN_SECOND
-    return f'{hours:02d}:{minutes:02d}:{seconds:02d},{ms:03d}'
+    return '%02d:%02d:%02d,%03d' % (hours, minutes, seconds, ms)
