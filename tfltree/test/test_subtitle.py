@@ -7,6 +7,7 @@ def test_srt_generation():
     expected = open('tfltree/test/fixtures/many_issues.srt', 'r').read()
     audio_files = json.loads(open('tfltree/test/fixtures/audio_files.json', 'r').read())
     actual = subtitle._convert_to_srt_text(audio_files)
+    print(actual)
     assert actual == expected
 
 

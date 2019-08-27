@@ -26,11 +26,13 @@ def _convert_to_srt_text(audio_files):
 
 
 CHARACTERS_PER_FRAGMENT = 64
+MINIMUM_DURATION_FOR_FRAGMENT = 1000
 
 
 def _split_file_into_fragments(audio_file):
     fragments = [{'phrase': ''}]
     total_duration = audio_file['duration']
+    total_characters = len(audio_file['phrase'])
     words = audio_file['phrase'].strip().split(' ')
     char_count = 0
     for word in words:
@@ -39,11 +41,18 @@ def _split_file_into_fragments(audio_file):
             char_count = 0
         fragments[-1]['phrase'] += word + ' '
         char_count += len(word) + 1
-    # Calculate duration per fragment
-    fragment_duration = int(total_duration / len(fragments))
-    for fragment in fragments:
-        fragment['phrase'] = fragment['phrase'].strip()
-        fragment['duration'] = fragment_duration
+    fragment_durations = [(total_duration/total_characters)*len(f['phrase']) for f in fragments]
+    # Fragments must be of a minimum duration
+    if fragment_durations[-1] < MINIMUM_DURATION_FOR_FRAGMENT:
+        difference = MINIMUM_DURATION_FOR_FRAGMENT - fragment_durations[-1]
+        number_of_fragments_to_add = len(fragment_durations) - 1
+        for i in range(number_of_fragments_to_add):
+            fragment_durations[i] -= difference / number_of_fragments_to_add
+        fragment_durations[-1] = MINIMUM_DURATION_FOR_FRAGMENT
+    for index, fragment in enumerate(fragments):
+        phrase = fragment['phrase'].strip()
+        fragment['phrase'] = phrase
+        fragment['duration'] = round(fragment_durations[index])
     return fragments
 
 
