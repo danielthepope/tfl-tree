@@ -18,7 +18,7 @@ def generate_phrases_for_status(status):
 
 
 def generate_speech(filename, text):
-    subprocess.check_call(['espeak', '-v', 'english', '-w', filename, text])
+    subprocess.check_call(['pico2wave', '-l', 'en-GB', '-w', filename, text])
 
 
 def speech_duration_ms(filename):

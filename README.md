@@ -2,11 +2,11 @@
 
 ## Requirements
 On your Raspberry Pi, you need to install some dependencies:
-- `espeak` for speech synthesis
+- `libttspico-utils` for speech synthesis using the `pico2wave` command
 - `mediainfo` for getting information about generated speech
 
 ```bash
-sudo apt install espeak mediainfo
+sudo apt install libttspico-utils mediainfo
 ```
 
 `ffmpeg` should already be installed. This is required to package the video with the generated audio
