@@ -1,8 +1,10 @@
 import json
 import logging as log
-import requests
-from time import strftime
 from tempfile import mkstemp
+from time import strftime
+
+import requests
+
 
 class TflApi:
     url = ''
@@ -38,4 +40,3 @@ if __name__ == '__main__':
     API = TflApi()
     status = API.update_status()
     log.debug(status)
-

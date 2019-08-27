@@ -1,11 +1,13 @@
+import logging as log
+from tempfile import mkstemp
 from time import sleep, strftime
+
+from tfltree.raspberrypi import speech, status_light, subtitle, video
 from tfltree.raspberrypi.camera import Camera
 from tfltree.raspberrypi.tfl import TflApi
-from tfltree.raspberrypi import speech, status_light, subtitle, video
-from tempfile import mkstemp
-import logging as log
 
 API = TflApi()
+
 
 def generate_audio_files(status, timestamp):
     audio_scripts = speech.generate_phrases_for_status(status)
@@ -23,6 +25,7 @@ def generate_audio_files(status, timestamp):
             'duration': duration
         })
     return audio_files
+
 
 def main():
     camera = Camera()
@@ -46,6 +49,7 @@ def main():
             log.debug('Status is the same')
 
         sleep(120)
+
 
 if __name__ == '__main__':
     main()

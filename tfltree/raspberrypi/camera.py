@@ -1,10 +1,11 @@
 import logging as log
-import picamera
-from time import sleep
 from tempfile import mkstemp
+from time import sleep
+
+import picamera
 from tfltree import timeit
 from tfltree.raspberrypi import status_light
-import subprocess
+
 
 class Camera:
     camera = None

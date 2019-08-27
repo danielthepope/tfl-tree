@@ -1,7 +1,9 @@
 import logging as log
 import subprocess
 from tempfile import mkstemp
+
 from tfltree import timeit
+
 
 @timeit
 def package_mp4(video_file, audio_files, timestamp):
@@ -11,6 +13,7 @@ def package_mp4(video_file, audio_files, timestamp):
     log.debug('Packaged video file saved to %s' % output_file)
     return output_file
 
+
 @timeit
 def encode_mp4_with_subtitles(video_file, audio_files, subtitle_file, timestamp):
     output_file = _create_temp_output_file('%s_subtitled' % timestamp)
@@ -19,15 +22,19 @@ def encode_mp4_with_subtitles(video_file, audio_files, subtitle_file, timestamp)
     log.debug('Subtitled video file saved to %s' % output_file)
     return output_file
 
+
 def _create_temp_output_file(timestamp):
     (_, path) = mkstemp('.mp4', 'tfltree_%s_' % timestamp)
     return path
 
+
 def _generate_ffmpeg_package_command(video_file, audio_files, output_file):
     return _generate_ffmpeg_command(output_file, video_file, audio_files)
 
+
 def _generate_ffmpeg_burn_subtitles_command(video_file, audio_files, subtitle_file, output_file):
     return _generate_ffmpeg_command(output_file, video_file, audio_files, subtitle_file)
+
 
 def _generate_ffmpeg_command(output_file, video_file, audio_files, subtitle_file=None):
     command = ['ffmpeg', '-y', '-r', '30', '-i', video_file]
@@ -44,12 +51,14 @@ def _generate_ffmpeg_command(output_file, video_file, audio_files, subtitle_file
     command.append(output_file)
     return command
 
+
 def _generate_filter(audio_files, start_index, stream_name):
     output = ''
     for i in range(len(audio_files)):
         output += '[%s:0]' % (i + start_index)
     output += 'concat=n=%s:v=0:a=1[%s]' % (len(audio_files), stream_name)
     return output
+
 
 def _run_ffmpeg(command):
     try:

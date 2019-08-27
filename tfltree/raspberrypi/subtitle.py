@@ -10,6 +10,7 @@ def convert_to_srt_file(audio_files, timestamp):
     log.debug('Written subtitle file to %s' % path)
     return path
 
+
 def _convert_to_srt_text(audio_files):
     # audio_files is an array of dictionaries.
     # duration (milliseconds) and phrase are important fields here
@@ -25,6 +26,7 @@ def _convert_to_srt_text(audio_files):
 
 
 CHARACTERS_PER_FRAGMENT = 64
+
 
 def _split_file_into_fragments(audio_file):
     fragments = [{'phrase': ''}]
@@ -48,6 +50,7 @@ def _split_file_into_fragments(audio_file):
 CHARACTERS_PER_LINE = 32
 MAX_LINES = 2
 
+
 def _create_srt_fragment(index, start, duration, text):
     start_timestamp = _convert_ms_to_timestamp(start)
     end_timestamp = _convert_ms_to_timestamp(start + duration)
@@ -65,9 +68,11 @@ def _create_srt_fragment(index, start, duration, text):
         srt_text += line.strip() + '\n'
     return '%s\n%s --> %s\n%s\n' % (index, start_timestamp, end_timestamp, srt_text)
 
+
 MILLIS_IN_HOUR = 3600000
 MILLIS_IN_MINUTE = 60000
 MILLIS_IN_SECOND = 1000
+
 
 def _convert_ms_to_timestamp(millis):
     hours = int(millis / MILLIS_IN_HOUR)

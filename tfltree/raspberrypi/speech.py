@@ -1,5 +1,7 @@
-from pymediainfo import MediaInfo
 import subprocess
+
+from pymediainfo import MediaInfo
+
 
 def generate_phrases_for_status(status):
     messages = []
@@ -84,7 +86,7 @@ def _generate_disruption_phrase(line_name, line_status):
         message = 'Information about the %s Line.' % line_name
     else:
         return []
-    
+
     if reason:
         return ['%s %s' % (message, _remove_line_name_from_reason(reason))]
     else:
