@@ -16,6 +16,11 @@ MANY_DISRUPTIONS = json.loads(
 )
 
 
+GOOD_SERVICE = json.loads(
+    open('tfltree/test/fixtures/good_service.json', 'r').read()
+)
+
+
 STATUS_DESCRIPTIONS = {
     0: 'Special Service',
     1: 'Closed',

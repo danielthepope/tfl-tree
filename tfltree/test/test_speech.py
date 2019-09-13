@@ -56,6 +56,12 @@ def test_many_disruptions():
     ]
 
 
+def test_good_service():
+    assert speech.generate_phrases_for_status(api_helper.GOOD_SERVICE) == [
+        'There is a good service on all London Underground lines.'
+    ]
+
+
 def test_remove_line_name():
     actual = speech._remove_line_name_from_reason('PICCADILLY LINE: No service between Rayners Lane and Uxbridge.')
     assert actual == 'No service between Rayners Lane and Uxbridge.'

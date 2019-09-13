@@ -12,6 +12,8 @@ def generate_phrases_for_status(status):
             messages += disruption_phrases
         else:
             good_lines.append(line['name'])
+    if len(messages) == 0:
+        return ['There is a good service on all London Underground lines.']
     if good_lines:
         messages.append(_generate_good_line_phrase(good_lines))
     return messages
