@@ -73,94 +73,94 @@ Chiltern Railways between West
 Ruislip and Marylebone.
 
 16
-00:00:48,027 --> 00:00:51,319
+00:00:48,027 --> 00:00:51,112
 There are severe delays on the
 District Line. Severe delays
 
 17
-00:00:51,319 --> 00:00:54,611
+00:00:51,112 --> 00:00:54,197
 between Wimbledon and Edgware
 Road and Minor delays between
 
 18
-00:00:54,611 --> 00:00:58,010
+00:00:54,197 --> 00:00:57,388
 Earl's Court and Richmond /
 Ealing Broadway due to an earlier
 
 19
-00:00:58,010 --> 00:01:01,568
+00:00:57,388 --> 00:01:00,738
 signal failure at Earl's Court,
 your tickets will be accepted on
 
 20
-00:01:01,568 --> 00:01:02,568
+00:01:00,738 --> 00:01:01,738
 the buses.
 
 21
-00:01:02,568 --> 00:01:05,791
+00:01:01,738 --> 00:01:04,752
 There are minor delays on the
 District Line. Severe delays
 
 22
-00:01:05,791 --> 00:01:09,067
+00:01:04,752 --> 00:01:07,818
 between Wimbledon and Edgware
 Road and Minor delays between
 
 23
-00:01:09,067 --> 00:01:12,448
+00:01:07,818 --> 00:01:10,990
 Earl's Court and Richmond /
 Ealing Broadway due to an earlier
 
 24
-00:01:12,448 --> 00:01:15,988
+00:01:10,990 --> 00:01:14,321
 signal failure at Earl's Court,
 your tickets will be accepted on
 
 25
-00:01:15,988 --> 00:01:16,988
+00:01:14,321 --> 00:01:15,321
 the buses.
 
 26
-00:01:16,988 --> 00:01:21,216
+00:01:15,321 --> 00:01:19,549
 There is a partial closure on
 the Metropolitan Line. Saturday
 
 27
-00:01:21,216 --> 00:01:25,308
+00:01:19,549 --> 00:01:23,641
 24, Sunday 25 and Bank Holiday
 Monday 26 August, no service
 
 28
-00:01:25,308 --> 00:01:29,536
+00:01:23,641 --> 00:01:27,869
 between Rayners Lane and
 Uxbridge. Replacement buses operate.
 
 29
-00:01:29,536 --> 00:01:33,876
+00:01:27,869 --> 00:01:32,209
 There is a partial closure on
 the Piccadilly Line. Saturday 24,
 
 30
-00:01:33,876 --> 00:01:38,216
+00:01:32,209 --> 00:01:36,549
 Sunday 25 and Bank Holiday
 Monday 26 August, no service between
 
 31
-00:01:38,216 --> 00:01:41,878
+00:01:36,549 --> 00:01:40,211
 Rayners Lane and Uxbridge.
 Replacement buses operate.
 
 32
-00:01:41,878 --> 00:01:45,821
+00:01:40,211 --> 00:01:44,154
 The Waterloo & City Line is
 closed. The service will resume
 
 33
-00:01:45,821 --> 00:01:47,529
+00:01:44,154 --> 00:01:45,862
 again at 08:00 on Monday.
 
 34
-00:01:47,529 --> 00:01:49,914
+00:01:45,862 --> 00:01:48,247
 There is a good service on all
 other lines.
 
