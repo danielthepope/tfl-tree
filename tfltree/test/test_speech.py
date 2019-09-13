@@ -196,3 +196,9 @@ def test_disruption_phrase_20():
     line_status = api_helper.create_test_line_status(20, None)
     actual = speech._generate_disruption_phrases_for_line(line_status)
     assert actual == ['The Piccadilly Line is closed.']
+
+
+def test_pico_convert():
+    actual = speech.convert_to_pico_text('The Hammersmith & City Line is closed.')
+    expected = 'The Hammersmith and City Line is closed.'
+    assert actual == expected

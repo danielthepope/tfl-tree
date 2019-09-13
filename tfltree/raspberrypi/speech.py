@@ -19,8 +19,13 @@ def generate_phrases_for_status(status):
     return messages
 
 
+def convert_to_pico_text(text):
+    return text.replace('&', 'and')
+
+
 def generate_speech(filename, text):
-    subprocess.check_call(['pico2wave', '-l', 'en-GB', '-w', filename, text])
+    pico_text = convert_to_pico_text(text)
+    subprocess.check_call(['pico2wave', '-l', 'en-GB', '-w', filename, pico_text])
 
 
 def speech_duration_ms(filename):
