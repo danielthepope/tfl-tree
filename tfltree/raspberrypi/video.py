@@ -62,7 +62,7 @@ def _generate_filter(audio_files, start_index, stream_name):
 
 def _run_ffmpeg(command):
     try:
-        subprocess.check_output(command)
+        subprocess.check_output(command, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         log.error('Failed to call ffmpeg')
         log.error(e.output)
