@@ -25,3 +25,7 @@ If you want to install dependencies on another computer (e.g. if you're editing 
 ```bash
 pip install -r requirements.txt
 ```
+
+## Run tests
+
+This project uses the built-in Python UnitTest module. To run the tests, call `python -m unittest`
