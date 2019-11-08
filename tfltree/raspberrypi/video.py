@@ -10,7 +10,7 @@ def package_mp4(video_file, audio_files, timestamp):
     output_file = _create_temp_output_file('%s_packaged' % timestamp)
     command = _generate_ffmpeg_package_command(video_file, audio_files, output_file)
     _run_ffmpeg(command)
-    log.debug('Packaged video file saved to %s' % output_file)
+    log.debug('Packaged video file saved to %s', output_file)
     return output_file
 
 
@@ -19,7 +19,7 @@ def encode_mp4_with_subtitles(video_file, audio_files, subtitle_file, timestamp)
     output_file = _create_temp_output_file('%s_subtitled' % timestamp)
     command = _generate_ffmpeg_burn_subtitles_command(video_file, audio_files, subtitle_file, output_file)
     _run_ffmpeg(command)
-    log.debug('Subtitled video file saved to %s' % output_file)
+    log.debug('Subtitled video file saved to %s', output_file)
     return output_file
 
 

@@ -7,7 +7,7 @@ def convert_to_srt_file(audio_files, timestamp):
     srt_text = _convert_to_srt_text(audio_files)
     with open(path, 'w') as file:
         file.write(srt_text)
-    log.debug('Written subtitle file to %s' % path)
+    log.debug('Written subtitle file to %s', path)
     return path
 
 

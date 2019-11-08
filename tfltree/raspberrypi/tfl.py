@@ -15,7 +15,7 @@ class TflApi:
         self.url = url
 
     def update_status(self, timestamp=strftime('%Y%m%d_%H%M%S')):
-        log.info('Updating status from %s' % self.url)
+        log.info('Updating status from %s', self.url)
         response = requests.get(self.url)
         if response.status_code == 200:
             self._previous_status = self.status
@@ -26,9 +26,9 @@ class TflApi:
                 (fd, path) = mkstemp('.json', 'tfltree_api_%s_' % timestamp)
                 with open(fd, 'w') as f:
                     f.write(response_text)
-                    log.debug('Wrote API response to %s' % path)
+                    log.debug('Wrote API response to %s', path)
         else:
-            log.warn('Received status %s from API. Returning previous one' % response.status_code)
+            log.warn('Received status %s from API. Returning previous one', response.status_code)
         return self.status
 
     def has_status_changed(self):

@@ -14,10 +14,10 @@ def generate_audio_files(status, timestamp):
     audio_files = []
     for index, phrase in enumerate(audio_scripts):
         (file_handle, path) = mkstemp('.wav', 'tfltree_%s_%s_' % (timestamp, index))
-        log.debug('%s: "%s"' % (path, phrase))
+        log.debug('%s: "%s"', path, phrase)
         speech.generate_speech(path, phrase)
         duration = speech.speech_duration_ms(path)
-        log.debug('%s duration is %sms' % (path, duration))
+        log.debug('%s duration is %sms', path, duration)
         audio_files.append({
             'file_handle': file_handle,
             'path': path,
@@ -36,9 +36,9 @@ def main():
             log.info('Status is different')
             log.debug(status)
             audio_files = generate_audio_files(status, timestamp)
-            log.debug('Audio files: %s' % audio_files)
+            log.debug('Audio files: %s', audio_files)
             total_duration = sum([f['duration'] for f in audio_files])
-            log.info('Total duration: %sms' % total_duration)
+            log.info('Total duration: %sms', total_duration)
             subtitle_file = subtitle.convert_to_srt_file(audio_files, timestamp)
             video_file = camera.record_for_seconds(total_duration/1000, timestamp)
             audio_filenames = [f['path'] for f in audio_files]
