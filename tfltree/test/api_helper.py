@@ -1,5 +1,7 @@
 import json
 
+from tfltree.raspberrypi import LineStatus
+
 
 PICCADILLY_METROPOLITAN_ENGINEERING = json.loads(
     open('tfltree/test/fixtures/piccadilly_metropolitan_engineering.json', 'r').read()
@@ -46,24 +48,15 @@ STATUS_DESCRIPTIONS = {
 }
 
 
-def create_test_line_status(status, message):
+def create_test_line_status(status_code, message):
     output = {
-        '$type': 'Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities',
-        'id': 'piccadilly',
-        'name': 'Piccadilly',
-        'modeName': 'tube',
-        'disruptions': [],
-        'created': '2019-08-20T16:25:25.35Z',
-        'modified': '2019-08-20T16:25:25.35Z',
-        'lineStatuses': [{
-            '$type': 'Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities',
-            'id': 0,
-            'lineId': 'piccadilly',
-            'statusSeverity': status,
-            'statusSeverityDescription': STATUS_DESCRIPTIONS[status],
-            'created': '0001-01-01T00:00:00'
-        }]
+        '$type': 'Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities',
+        'id': 0,
+        'lineId': 'piccadilly',
+        'statusSeverity': status_code,
+        'statusSeverityDescription': STATUS_DESCRIPTIONS[status_code],
+        'created': '0001-01-01T00:00:00'
     }
     if message:
-        output['lineStatuses'][0]['reason'] = message
-    return output
+        output['reason'] = message
+    return LineStatus(affected_lines=['Piccadilly'], raw_status=output, status_code=status_code)

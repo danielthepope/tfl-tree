@@ -2,23 +2,23 @@ import logging as log
 from tempfile import mkstemp
 
 
-def convert_to_srt_file(audio_files, timestamp):
+def convert_to_srt_file(audio_statuses, timestamp):
     (_, path) = mkstemp('.srt', 'tfltree_%s_' % timestamp)
-    srt_text = _convert_to_srt_text(audio_files)
+    srt_text = _convert_to_srt_text(audio_statuses)
     with open(path, 'w') as file:
         file.write(srt_text)
     log.debug('Written subtitle file to %s', path)
     return path
 
 
-def _convert_to_srt_text(audio_files):
-    # audio_files is an array of dictionaries.
-    # duration (milliseconds) and phrase are important fields here
+def _convert_to_srt_text(audio_statuses):
+    # audio_statuses is an array of LineStatus objects.
+    # duration_ms and phrase are important fields here
     output = ''
     start = 0
     fragments = []
-    for file in audio_files:
-        fragments += _split_file_into_fragments(file)
+    for line_status in audio_statuses:
+        fragments += _split_file_into_fragments(line_status)
     for index, fragment in enumerate(fragments):
         output += _create_srt_fragment(index + 1, start, fragment['duration'], fragment['phrase'])
         start += fragment['duration']
@@ -29,11 +29,11 @@ CHARACTERS_PER_FRAGMENT = 64
 MINIMUM_DURATION_FOR_FRAGMENT = 1000
 
 
-def _split_file_into_fragments(audio_file):
+def _split_file_into_fragments(line_status):
     fragments = [{'phrase': ''}]
-    total_duration = audio_file['duration']
-    total_characters = len(audio_file['phrase'])
-    words = audio_file['phrase'].strip().split(' ')
+    total_duration = line_status.duration_ms
+    total_characters = len(line_status.phrase)
+    words = line_status.phrase.strip().split(' ')
     char_count = 0
     for word in words:
         if char_count + len(word) > CHARACTERS_PER_FRAGMENT:

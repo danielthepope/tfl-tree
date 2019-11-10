@@ -1,22 +1,45 @@
+import logging as log
 import subprocess
+from tempfile import mkstemp
 
 from pymediainfo import MediaInfo
+from tfltree.raspberrypi import LineStatus
 
 
-def generate_phrases_for_status(status):
-    messages = []
+def generate_audio_files(line_statuses, timestamp):
+    audio_statuses = generate_phrases_for_status(line_statuses)
+    for index, line_status in enumerate(audio_statuses):
+        (file_handle, file_path) = mkstemp('.wav', 'tfltree_%s_%s_' % (timestamp, index))
+        log.debug('%s: "%s"', file_path, line_status)
+        generate_speech(file_path, line_status.phrase)
+        duration_ms = speech_duration_ms(file_path)
+        log.debug('%s duration is %sms', file_path, duration_ms)
+        line_status.file_handle = file_handle
+        line_status.file_path = file_path
+        line_status.duration_ms = duration_ms
+    return audio_statuses
+
+
+def generate_phrases_for_status(line_statuses):
+    output_statuses = []
     good_lines = []
-    for line in status:
-        disruption_phrases = _generate_disruption_phrases_for_line(line)
-        if disruption_phrases:
-            messages += disruption_phrases
+    for line_status in line_statuses:
+        disruption_phrase = _generate_disruption_phrase(line_status)
+        line_status.phrase = disruption_phrase
+        if disruption_phrase:
+            output_statuses.append(line_status)
         else:
-            good_lines.append(line['name'])
-    if len(messages) == 0:
-        return ['There is a good service on all London Underground lines.']
+            good_lines.append(line_status.affected_lines[0])
+    if len(output_statuses) == 0:
+        return [LineStatus(affected_lines=good_lines,
+                           phrase='There is a good service on all London Underground lines.',
+                           status_code=10)]
     if good_lines:
-        messages.append(_generate_good_line_phrase(good_lines))
-    return messages
+        output_statuses.append(LineStatus(affected_lines=good_lines,
+                                          phrase=_generate_good_line_phrase(good_lines),
+                                          status_code=10)
+                               )
+    return output_statuses
 
 
 def convert_to_pico_text(text):
@@ -44,10 +67,10 @@ def _generate_good_line_phrase(good_lines):
         return 'There is a good service on all other lines.'
 
 
-def _generate_disruption_phrase(line_name, line_status):
-    severity = line_status['statusSeverity']
-    if 'reason' in line_status:
-        reason = line_status['reason']
+def _generate_disruption_phrase_for_status_code(line_name, line_status):
+    severity = line_status.status_code
+    if 'reason' in line_status.raw_status:
+        reason = line_status.raw_status['reason']
     else:
         reason = None
 
@@ -72,7 +95,7 @@ def _generate_disruption_phrase(line_name, line_status):
     elif severity == 9:
         message = 'There are minor delays on the %s Line.' % line_name
     elif severity == 10:
-        return []
+        return None
     elif severity == 11:
         message = 'The %s Line is part closed.' % line_name
     elif severity == 12:
@@ -92,20 +115,17 @@ def _generate_disruption_phrase(line_name, line_status):
     elif severity == 19:
         message = 'Information about the %s Line.' % line_name
     else:
-        return []
+        return None
 
     if reason:
-        return ['%s %s' % (message, _remove_line_name_from_reason(reason))]
+        return '%s %s' % (message, _remove_line_name_from_reason(reason))
     else:
-        return [message]
+        return message
 
 
-def _generate_disruption_phrases_for_line(line):
-    line_name = line['name']
-    output = []
-    for line_status in line['lineStatuses']:
-        output += _generate_disruption_phrase(line_name, line_status)
-    return output
+def _generate_disruption_phrase(line_status):
+    line_name = line_status.affected_lines[0]
+    return _generate_disruption_phrase_for_status_code(line_name, line_status)
 
 
 def _remove_line_name_from_reason(message):

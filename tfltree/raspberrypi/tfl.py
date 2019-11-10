@@ -5,6 +5,8 @@ from time import strftime
 
 import requests
 
+from tfltree.raspberrypi import LineStatus
+
 
 class TflApi:
     url = ''
@@ -33,6 +35,18 @@ class TflApi:
 
     def has_status_changed(self):
         return not(str(self.status) == str(self._previous_status))
+
+
+def map_status_to_model(status):
+    output = []
+    for line in status:
+        for s in line['lineStatuses']:
+            output.append(LineStatus(
+                affected_lines=[line['name']],
+                raw_status=s,
+                status_code=s['statusSeverity']
+            ))
+    return output
 
 
 if __name__ == '__main__':
