@@ -47,7 +47,7 @@ def _generate_ffmpeg_command(output_file, video_file, audio_files, subtitle_file
         command += ['-vf', 'subtitles=%s' % subtitle_file]
     else:
         command += ['-c:v', 'copy']
-    command += ['-c:a', 'mp3']
+    command += ['-c:a', 'aac']
     command.append(output_file)
     return command
 
