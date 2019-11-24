@@ -30,7 +30,7 @@ class TflApi:
                     f.write(response_text)
                     log.debug('Wrote API response to %s', path)
         else:
-            log.warn('Received status %s from API. Returning previous one', response.status_code)
+            log.warning('Received status %s from API. Returning previous one', response.status_code)
         return self.status
 
     def has_status_changed(self):
