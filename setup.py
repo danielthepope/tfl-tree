@@ -9,6 +9,7 @@ setup(
         'pymediainfo==4.0',
         'python-dotenv==0.10.3',
         'requests==2.22.0',
+        'python-twitter @ https://github.com/danielthepope/python-twitter/archive/feature/subtitles.zip',
     ],
     extras_require={
         # The following dependencies fail to install if you're not running on a Raspberry Pi.

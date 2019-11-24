@@ -1,7 +1,9 @@
-import logging as log
+import logging
 from time import time
 
-log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.DEBUG)
+logger = logging.getLogger('tfltree')
+logger.setLevel(logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
 
 
 def timeit(function):
@@ -9,7 +11,7 @@ def timeit(function):
         start_time = time()
         result = function(*args, **kw)
         end_time = time()
-        log.debug('%r %r %r  %2.2f ms',
-                  function.__name__, args, kw, (end_time - start_time) * 1000)
+        logger.debug('%r %r %r  %2.2f ms',
+                     function.__name__, args, kw, (end_time - start_time) * 1000)
         return result
     return timed

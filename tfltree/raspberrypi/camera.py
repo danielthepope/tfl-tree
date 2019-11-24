@@ -1,8 +1,8 @@
-import logging as log
 from tempfile import mkstemp
 from time import sleep
 
 import picamera
+from tfltree import logger as log
 from tfltree import timeit
 from tfltree.raspberrypi import status_light
 

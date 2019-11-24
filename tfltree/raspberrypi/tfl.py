@@ -1,10 +1,10 @@
 import json
-import logging as log
 from tempfile import mkstemp
 from time import strftime
 
 import requests
 
+from tfltree import logger as log
 from tfltree.raspberrypi import LineStatus
 
 
@@ -30,7 +30,7 @@ class TflApi:
                     f.write(response_text)
                     log.debug('Wrote API response to %s', path)
         else:
-            log.warn('Received status %s from API. Returning previous one', response.status_code)
+            log.warning('Received status %s from API. Returning previous one', response.status_code)
         return self.status
 
     def has_status_changed(self):
