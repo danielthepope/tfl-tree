@@ -1,6 +1,7 @@
 # tfl-tree
 
 ## Requirements
+
 On your Raspberry Pi, you need to install some dependencies:
 - `libttspico-utils` for speech synthesis using the `pico2wave` command
 - `mediainfo` for getting information about generated speech
@@ -29,3 +30,7 @@ pip install -r requirements.txt
 ## Run tests
 
 This project uses the built-in Python UnitTest module. To run the tests, call `python -m unittest`
+
+## Configuration
+
+Configuration is done through environment variables. Look at config.py for the available variables. You can set them by creating a `.env` file in the project root.
