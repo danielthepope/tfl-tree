@@ -1,7 +1,8 @@
-import logging as log
 import os
 
 from dotenv import load_dotenv
+
+from tfltree import logger as log
 
 load_dotenv()
 

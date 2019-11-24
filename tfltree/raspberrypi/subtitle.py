@@ -1,5 +1,6 @@
-import logging as log
 from tempfile import mkstemp
+
+from tfltree import logger as log
 
 
 def convert_to_srt_file(audio_statuses, timestamp):

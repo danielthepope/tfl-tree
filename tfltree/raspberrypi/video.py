@@ -1,7 +1,7 @@
-import logging as log
 import subprocess
 from tempfile import mkstemp
 
+from tfltree import logger as log
 from tfltree import timeit
 
 

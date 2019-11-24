@@ -1,7 +1,6 @@
-import logging as log
-
 import twitter
 
+from tfltree import logger as log
 from tfltree.raspberrypi.config import (ACCESS_TOKEN_KEY, ACCESS_TOKEN_SECRET,
                                         CONSUMER_KEY, CONSUMER_SECRET)
 

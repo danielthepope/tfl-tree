@@ -1,10 +1,10 @@
 import json
-import logging as log
 from tempfile import mkstemp
 from time import strftime
 
 import requests
 
+from tfltree import logger as log
 from tfltree.raspberrypi import LineStatus
 
 

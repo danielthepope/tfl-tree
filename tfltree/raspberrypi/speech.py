@@ -1,8 +1,8 @@
-import logging as log
 import subprocess
 from tempfile import mkstemp
 
 from pymediainfo import MediaInfo
+from tfltree import logger as log
 from tfltree.raspberrypi import LineStatus
 
 

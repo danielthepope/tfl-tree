@@ -1,6 +1,6 @@
-import logging as log
 from time import sleep, strftime
 
+from tfltree import logger as log
 from tfltree.raspberrypi import speech, status_light, subtitle, tweets, video
 from tfltree.raspberrypi.camera import Camera
 from tfltree.raspberrypi.tfl import TflApi, map_status_to_model
