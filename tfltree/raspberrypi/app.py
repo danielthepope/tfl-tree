@@ -1,7 +1,7 @@
 import logging as log
 from time import sleep, strftime
 
-from tfltree.raspberrypi import speech, status_light, subtitle, twitter, video
+from tfltree.raspberrypi import speech, status_light, subtitle, tweets, video
 from tfltree.raspberrypi.camera import Camera
 from tfltree.raspberrypi.tfl import TflApi, map_status_to_model
 
@@ -26,7 +26,7 @@ def main():
             status_light.blink()
             packaged_file = video.package_mp4(video_file, audio_filenames, timestamp)
             status_light.blink(0.9, 0.1)
-            twitter.post_video('Hello from TFL Tree', packaged_file, subtitle_file)
+            tweets.post_video('Hello from TFL Tree', packaged_file, subtitle_file)
             status_light.blink(0.02, 9.98)
         else:
             log.debug('Status is the same')
