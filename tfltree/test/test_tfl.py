@@ -10,6 +10,6 @@ class TestTfl(TestCase):
         actual = tfl.map_status_to_model(api_response)
         self.assertIsInstance(actual, list)
         self.assertIsInstance(actual[0], LineStatus)
-        self.assertListEqual(actual[0].affected_lines, ['Bakerloo'])
+        self.assertListEqual(actual[0].affected_lines, ['bakerloo'])
         self.assertEqual(actual[0].status_code, 6)
         self.assertDictEqual(actual[0].raw_status, api_response[0]['lineStatuses'][0])

@@ -6,6 +6,29 @@ from tfltree import logger as log
 from tfltree.raspberrypi import LineStatus
 
 
+TUBE_ID_TO_NAME = {
+    'bakerloo': 'Bakerloo',
+    'central': 'Central',
+    'circle': 'Circle',
+    'district': 'District',
+    'hammersmith-city': 'Hammersmith & City',
+    'jubilee': 'Jubilee',
+    'metropolitan': 'Metropolitan',
+    'northern': 'Northern',
+    'piccadilly': 'Piccadilly',
+    'victoria': 'Victoria',
+    'waterloo-city': 'Waterloo & City'
+}
+
+
+def map_tube_id_to_name(tube_id):
+    if tube_id in TUBE_ID_TO_NAME:
+        return TUBE_ID_TO_NAME[tube_id]
+    else:
+        log.warning('Tube ID %s not in list', tube_id)
+        return tube_id
+
+
 def generate_audio_files(line_statuses, timestamp):
     audio_statuses = generate_phrases_for_status(line_statuses)
     for index, line_status in enumerate(audio_statuses):
@@ -57,17 +80,19 @@ def speech_duration_ms(filename):
 
 
 def _generate_good_line_phrase(good_lines):
-    if len(good_lines) == 1:
-        return 'There is a good service on the %s line.' % good_lines[0]
-    elif len(good_lines) == 2:
-        return 'There is a good service on the %s and %s lines.' % (good_lines[0], good_lines[1])
-    elif len(good_lines) == 3:
-        return 'There is a good service on the %s, %s and %s lines.' % (good_lines[0], good_lines[1], good_lines[2])
-    elif len(good_lines) > 3:
+    line_names = list(map(map_tube_id_to_name, good_lines))
+    if len(line_names) == 1:
+        return 'There is a good service on the %s line.' % line_names[0]
+    elif len(line_names) == 2:
+        return 'There is a good service on the %s and %s lines.' % (line_names[0], line_names[1])
+    elif len(line_names) == 3:
+        return 'There is a good service on the %s, %s and %s lines.' % (line_names[0], line_names[1], line_names[2])
+    elif len(line_names) > 3:
         return 'There is a good service on all other lines.'
 
 
-def _generate_disruption_phrase_for_status_code(line_name, line_status):
+def _generate_disruption_phrase_for_status_code(line_id, line_status):
+    line_name = map_tube_id_to_name(line_id)
     severity = line_status.status_code
     if 'reason' in line_status.raw_status:
         reason = line_status.raw_status['reason']

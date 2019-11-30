@@ -42,7 +42,7 @@ def map_status_to_model(status):
     for line in status:
         for s in line['lineStatuses']:
             output.append(LineStatus(
-                affected_lines=[line['name']],
+                affected_lines=[line['id']],
                 raw_status=s,
                 status_code=s['statusSeverity']
             ))
@@ -50,7 +50,8 @@ def map_status_to_model(status):
 
 
 if __name__ == '__main__':
-    log.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=log.DEBUG)
     API = TflApi()
     status = API.update_status()
     log.debug(status)
+    model = map_status_to_model(status)
+    log.debug(model)

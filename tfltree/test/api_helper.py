@@ -59,4 +59,4 @@ def create_test_line_status(status_code, message):
     }
     if message:
         output['reason'] = message
-    return LineStatus(affected_lines=['Piccadilly'], raw_status=output, status_code=status_code)
+    return LineStatus(affected_lines=['piccadilly'], raw_status=output, status_code=status_code)
