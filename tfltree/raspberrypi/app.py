@@ -29,7 +29,8 @@ def main():
             status_light.blink()
             packaged_file = video.package_mp4(video_file, audio_filenames, timestamp)
             status_light.blink(0.9, 0.1)
-            tweets.post_video('Hello from TFL Tree', packaged_file, subtitle_file)
+            tweet_text = tweets.generate_tweet_text(audio_statuses)
+            tweets.post_video(tweet_text, packaged_file, subtitle_file)
             status_light.blink(0.02, 9.98)
             sleep(600)
         else:

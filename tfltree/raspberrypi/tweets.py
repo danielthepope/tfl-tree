@@ -6,11 +6,39 @@ from twitter.error import TwitterError
 from tfltree import logger as log
 from tfltree.raspberrypi.config import (ACCESS_TOKEN_KEY, ACCESS_TOKEN_SECRET,
                                         CONSUMER_KEY, CONSUMER_SECRET)
+from tfltree.raspberrypi.speech import map_tube_id_to_name
 
 # Twitter requires all keys
 enabled = False
 if all([CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN_KEY, ACCESS_TOKEN_SECRET]):
     enabled = True
+
+
+def flatten(list_of_lists):
+    output = []
+    for l in list_of_lists:
+        output += l
+    return list(set(output))
+
+
+def generate_tweet_text(audio_statuses):
+    delayed_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [6, 9]])
+    closed_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [1, 2, 3, 4, 5, 11, 20]])
+    info_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [
+                         0, 6, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19]])
+
+    output = 'London Underground status:\n'
+    if delayed_lines or closed_lines or info_lines:
+        if delayed_lines:
+            output += 'Delays on ' + ', '.join(list(map(map_tube_id_to_name, delayed_lines))) + '\n'
+        if closed_lines:
+            output += 'Closures on ' + ', '.join(list(map(map_tube_id_to_name, closed_lines))) + '\n'
+        if info_lines:
+            output += 'Info about ' + ', '.join(list(map(map_tube_id_to_name, info_lines)))
+        output = output.strip()
+    else:
+        output = 'Good service on all lines'
+    return output
 
 
 def post_video(tweet_text, video_file, subtitle_file):
@@ -41,3 +69,11 @@ def post_video(tweet_text, video_file, subtitle_file):
 
     else:
         log.warning('Twitter upload not enabled. Requires API tokens.')
+
+
+if __name__ == "__main__":
+    from tfltree.raspberrypi import tfl, speech
+    status = tfl.map_status_to_model(tfl.TflApi().update_status())
+    audio_statuses = speech.generate_phrases_for_status(status)
+    tweet_text = generate_tweet_text(audio_statuses)
+    log.info(tweet_text)
