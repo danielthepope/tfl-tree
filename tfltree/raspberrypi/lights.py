@@ -1,8 +1,10 @@
 import random
-from time import sleep
+from time import sleep, time
+from threading import Thread
 
 from led_server import led
 
+from tfltree import logger as log
 from tfltree.raspberrypi.config import LED_ENDPOINT
 
 
@@ -41,6 +43,7 @@ def create_led_for_status_code(status_code, home_colour):
     output['colours'] = []
     output['modifier'] = 'none'
     output['duration'] = 2
+    output['offset'] = None
     if status_code == 1 or status_code == 2 or status_code == 4 or status_code == 11 or status_code == 20:
         # Closed / suspended / Planned closure / Part closed
         output['colours'].append([0, 0, 0])
@@ -68,12 +71,10 @@ def create_led_for_status_code(status_code, home_colour):
         output['duration'] = 1
     elif status_code == 10:
         # Good service
-        output['colours'].append(led.lerp_colour(home_colour, [0, 0, 0], 0.5))
         output['colours'].append(home_colour)
-        output['colours'].append(led.lerp_colour(home_colour, [255, 255, 255], 0.5))
-        output['modifier'] = 'noise'
-        output['duration'] = 0.5
-        output['offset'] = random.random() * 42
+        output['modifier'] = 'sparkle'
+        output['offset'] = 0.05
+        # output['offset'] = random.random() * 42 # Use for 'noise' modifier
     else:
         output['colours'].append(led.lerp_colour([0, 0, 0], home_colour, 0.3))
         output['colours'].append(home_colour)
@@ -87,7 +88,7 @@ def show_all_line_statuses(leds, statuses):
     for i, status in enumerate(statuses):
         home_colour = LINE_COLOURS[status.affected_lines[0]]
         light = create_led_for_status_code(status.status_code, home_colour)
-        if 'offset' in light:
+        if light['offset'] is not None:
             offset = light['offset']
         else:
             offset = i/repeat
@@ -99,17 +100,52 @@ def show_all_line_statuses(leds, statuses):
                        repeat=repeat)
 
 
+def _play_sequence(leds, statuses, start_and_end_status):
+    for status in statuses:
+        start_time = time()
+        expected_duration_s = status.duration_ms / 1000
+        repeat = len(status.affected_lines)
+        for i, line_id in enumerate(status.affected_lines):
+            home_colour = LINE_COLOURS[line_id]
+            light = create_led_for_status_code(status.status_code, home_colour)
+            log.info('Showing status %s for the %s line for %s seconds',
+                     status.status_code,
+                     line_id,
+                     expected_duration_s)
+            leds.set_pixel(i,
+                           colours=light['colours'],
+                           modifier=light['modifier'],
+                           duration=light['duration'],
+                           offset=light['offset'] or 0,
+                           repeat=repeat)
+        sleep(expected_duration_s - (time() - start_time))
+    show_all_line_statuses(leds, start_and_end_status)
+    sleep(3)
+
+
+def play_a_sequence(leds, statuses, start_and_end_status):
+    thread = Thread(target=_play_sequence, args=(leds, statuses, start_and_end_status))
+    thread.start()
+
+
 if __name__ == '__main__':
-    from tfltree.raspberrypi import tfl
+    from tfltree.raspberrypi import tfl, speech
     from time import strftime
 
+    log.info('Hello')
     timestamp = strftime('%Y%m%d_%H%M%S')
     statuses = tfl.map_status_to_model(tfl.TflApi().update_status(timestamp))
+    audio_statuses = speech.generate_audio_files(statuses, timestamp)
 
+    log.info('Starting LEDs')
     leds = start_leds()
+    play_a_sequence(leds, audio_statuses)
+    log.info('play_a_sequence returned')
+
     show_all_line_statuses(leds, statuses)
     try:
         while True:
             sleep(1)
-    except:
+    except Exception as e:
         leds.all_off()
+        raise e
