@@ -10,6 +10,7 @@ API = TflApi()
 
 def main():
     camera = Camera()
+    status_light.blink(0.02, 9.98)
     leds = lights.start_leds()
     while True:
         timestamp = strftime('%Y%m%d_%H%M%S')
