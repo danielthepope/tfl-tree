@@ -6,6 +6,7 @@ import requests
 
 from tfltree import logger as log
 from tfltree.raspberrypi import LineStatus
+from tfltree.raspberrypi.config import UPLOAD_FIRST
 
 
 class TflApi:
@@ -34,7 +35,10 @@ class TflApi:
         return self.status
 
     def has_status_changed(self):
-        return not(str(self.status) == str(self._previous_status))
+        if self._previous_status or UPLOAD_FIRST:
+            return not(str(self.status) == str(self._previous_status))
+        else:
+            return False
 
 
 def map_status_to_model(status):
