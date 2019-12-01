@@ -18,6 +18,7 @@ def main():
         if API.has_status_changed():
             log.info('Status is different')
             log.debug(status)
+            lights.lamp_on()
             audio_statuses = speech.generate_audio_files(status, timestamp)
             log.debug('Audio files: %r', audio_statuses)
             total_duration = sum([f.duration_ms for f in audio_statuses])
@@ -26,6 +27,7 @@ def main():
             lights.play_a_sequence(leds, audio_statuses, status)
             video_file = camera.record_for_seconds(total_duration/1000 + 3, timestamp)
             audio_filenames = [f.file_path for f in audio_statuses]
+            lights.lamp_off()
             status_light.blink()
             log.info('Packaging MP4')
             packaged_file = video.package_mp4(video_file, audio_filenames, timestamp)

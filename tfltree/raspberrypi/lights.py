@@ -1,11 +1,11 @@
-import random
+import os
 from time import sleep, time
 from threading import Thread
 
 from led_server import led
 
 from tfltree import logger as log
-from tfltree.raspberrypi.config import LED_ENDPOINT
+from tfltree.raspberrypi.config import LAMP_ON_COMMAND, LAMP_OFF_COMMAND, LED_ENDPOINT
 
 
 LINE_COLOURS = {
@@ -46,10 +46,10 @@ def create_led_for_status_code(status_code, home_colour):
     output['offset'] = None
     if status_code == 1 or status_code == 2 or status_code == 4 or status_code == 11 or status_code == 20:
         # Closed / suspended / Planned closure / Part closed
-        output['colours'].append([0, 0, 0])
         output['colours'].append(home_colour)
-        output['modifier'] = 'blink'
-        output['duration'] = 1.5
+        output['colours'] += [[0, 0, 0]] * 5
+        output['modifier'] = 'smooth'
+        output['duration'] = 2
     elif status_code == 3 or status_code == 5:
         # Part suspended / partial closure
         output['colours'].append(home_colour)
@@ -126,6 +126,18 @@ def _play_sequence(leds, statuses, start_and_end_status):
 def play_a_sequence(leds, statuses, start_and_end_status):
     thread = Thread(target=_play_sequence, args=(leds, statuses, start_and_end_status))
     thread.start()
+
+
+def lamp_on():
+    log.debug(LAMP_ON_COMMAND)
+    os.system(LAMP_ON_COMMAND)
+    log.debug('done')
+
+
+def lamp_off():
+    log.debug(LAMP_OFF_COMMAND)
+    os.system(LAMP_OFF_COMMAND)
+    log.debug('done')
 
 
 if __name__ == '__main__':

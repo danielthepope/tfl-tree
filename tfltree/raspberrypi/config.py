@@ -13,6 +13,10 @@ PIXEL_COUNT = int(os.getenv('PIXEL_COUNT', 25))
 LED_SIZE = int(os.getenv('LED_SIZE', 25))
 LED_ENDPOINT = os.getenv('LED_ENDPOINT')
 
+# LAMP
+LAMP_ON_COMMAND = os.getenv('LAMP_ON_COMMAND', 'echo lamp on')
+LAMP_OFF_COMMAND = os.getenv('LAMP_OFF_COMMAND', 'echo lamp off')
+
 # TWITTER
 UPLOAD_FIRST = int(os.getenv('UPLOAD_FIRST', 0))
 CONSUMER_KEY = os.getenv('CONSUMER_KEY')
@@ -27,6 +31,8 @@ log.info('PIXEL_COUNT: %s', PIXEL_COUNT)
 log.info('LED_SIZE: %s', LED_SIZE)
 log.info('LED_ENDPOINT: %s', LED_ENDPOINT)
 log.info('UPLOAD_FIRST: %s', UPLOAD_FIRST)
+log.info('LAMP_ON_COMMAND: %s', LAMP_ON_COMMAND)
+log.info('LAMP_OFF_COMMAND: %s', LAMP_OFF_COMMAND)
 log.info('CONSUMER_KEY: %s', CONSUMER_KEY)
 log.info('CONSUMER_SECRET: %s', CONSUMER_SECRET)
 log.info('ACCESS_TOKEN_KEY: %s', ACCESS_TOKEN_KEY)
