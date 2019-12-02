@@ -36,7 +36,7 @@ def main():
             tweet_text = tweets.generate_tweet_text(audio_statuses)
             tweets.post_video(tweet_text, packaged_file, subtitle_file)
             status_light.blink(0.02, 9.98)
-            sleep(600)
+            sleep(900)
         else:
             log.debug('Status is the same')
             sleep(120)
