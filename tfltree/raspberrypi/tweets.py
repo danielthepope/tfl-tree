@@ -25,7 +25,7 @@ def generate_tweet_text(audio_statuses):
     delayed_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [6, 9]])
     closed_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [1, 2, 3, 4, 5, 11, 20]])
     info_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [
-                         0, 6, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19]])
+                         0, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18, 19]])
 
     output = 'London Underground status:\n'
     if delayed_lines or closed_lines or info_lines:
@@ -73,7 +73,7 @@ def post_video(tweet_text, video_file, subtitle_file):
 
 if __name__ == "__main__":
     from tfltree.raspberrypi import tfl, speech
-    status = tfl.map_status_to_model(tfl.TflApi().update_status())
+    status = tfl.TflApi().update_status()
     audio_statuses = speech.generate_phrases_for_status(status)
     tweet_text = generate_tweet_text(audio_statuses)
     log.info(tweet_text)

@@ -7,7 +7,7 @@ from tfltree.test import api_helper
 class TestSpeech(TestCase):
 
     def test_phrase_generator(self):
-        line_statuses = tfl.map_status_to_model(api_helper.PICCADILLY_METROPOLITAN_ENGINEERING)
+        line_statuses = tfl._map_status_to_model(api_helper.PICCADILLY_METROPOLITAN_ENGINEERING)
         actual = speech.generate_phrases_for_status(line_statuses)
         self.assertIsInstance(actual, list)
         self.assertIsInstance(actual[0], LineStatus)
@@ -27,7 +27,7 @@ class TestSpeech(TestCase):
         )
 
     def test_phrase_generator_night_tube(self):
-        line_statuses = tfl.map_status_to_model(api_helper.NIGHT_TUBE_WITH_ENGINEERING)
+        line_statuses = tfl._map_status_to_model(api_helper.NIGHT_TUBE_WITH_ENGINEERING)
         actual = speech.generate_phrases_for_status(line_statuses)
         phrases = [s.phrase for s in actual]
         self.assertListEqual(phrases, [
@@ -45,7 +45,7 @@ class TestSpeech(TestCase):
         ])
 
     def test_many_disruptions(self):
-        line_statuses = tfl.map_status_to_model(api_helper.MANY_DISRUPTIONS)
+        line_statuses = tfl._map_status_to_model(api_helper.MANY_DISRUPTIONS)
         actual = speech.generate_phrases_for_status(line_statuses)
         phrases = [s.phrase for s in actual]
         self.assertEqual(phrases, [
@@ -74,7 +74,7 @@ class TestSpeech(TestCase):
         ])
 
     def test_good_service(self):
-        line_statuses = tfl.map_status_to_model(api_helper.GOOD_SERVICE)
+        line_statuses = tfl._map_status_to_model(api_helper.GOOD_SERVICE)
         actual = speech.generate_phrases_for_status(line_statuses)
         self.assertEqual(actual[0].phrase, 'There is a good service on all London Underground lines.')
 

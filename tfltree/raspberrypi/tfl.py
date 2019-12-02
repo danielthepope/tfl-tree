@@ -23,7 +23,7 @@ class TflApi:
         if response.status_code == 200:
             self._previous_status = self.status
             response_text = response.text
-            self.status = json.loads(response_text)
+            self.status = _map_status_to_model(json.loads(response_text))
             log.info('Loaded status successfully')
             if self.has_status_changed():
                 (fd, path) = mkstemp('.json', 'tfltree_api_%s_' % timestamp)
@@ -41,7 +41,7 @@ class TflApi:
             return False
 
 
-def map_status_to_model(status):
+def _map_status_to_model(status):
     output = []
     for line in status:
         for s in line['lineStatuses']:
@@ -57,5 +57,5 @@ if __name__ == '__main__':
     API = TflApi()
     status = API.update_status()
     log.debug(status)
-    model = map_status_to_model(status)
+    model = _map_status_to_model(status)
     log.debug(model)

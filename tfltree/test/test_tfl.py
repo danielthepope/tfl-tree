@@ -7,7 +7,7 @@ from tfltree.test import api_helper
 class TestTfl(TestCase):
     def test_map_status_to_model(self):
         api_response = api_helper.MANY_DISRUPTIONS
-        actual = tfl.map_status_to_model(api_response)
+        actual = tfl._map_status_to_model(api_response)
         self.assertIsInstance(actual, list)
         self.assertIsInstance(actual[0], LineStatus)
         self.assertListEqual(actual[0].affected_lines, ['bakerloo'])

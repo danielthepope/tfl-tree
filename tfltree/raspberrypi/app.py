@@ -3,7 +3,7 @@ from time import sleep, strftime
 from tfltree import logger as log
 from tfltree.raspberrypi import lights, speech, status_light, subtitle, tweets, video
 from tfltree.raspberrypi.camera import Camera
-from tfltree.raspberrypi.tfl import TflApi, map_status_to_model
+from tfltree.raspberrypi.tfl import TflApi
 
 API = TflApi()
 
@@ -14,7 +14,7 @@ def main():
     leds = lights.start_leds()
     while True:
         timestamp = strftime('%Y%m%d_%H%M%S')
-        status = map_status_to_model(API.update_status(timestamp))
+        status = API.update_status(timestamp)
         lights.show_all_line_statuses(leds, status)
         if API.has_status_changed():
             log.info('Status is different')
