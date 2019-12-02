@@ -36,9 +36,13 @@ class TflApi:
 
     def has_status_changed(self):
         if self._previous_status or UPLOAD_FIRST:
-            return not(str(self.status) == str(self._previous_status))
+            return not(_just_status_codes(self.status) == _just_status_codes(self._previous_status))
         else:
             return False
+
+
+def _just_status_codes(status_model):
+    return [s.status_code for s in status_model]
 
 
 def _map_status_to_model(status):
