@@ -38,6 +38,15 @@ def default_sequence(leds):
         leds.set_pixel(i, [LINE_COLOURS[k]], repeat=LINE_COUNT, modifier='sparkle', offset=0.05)
 
 
+def create_leds_for_status(status):
+    output = []
+    for line in status.affected_lines:
+        home_colour = LINE_COLOURS[line]
+        for status_code in status.status_codes:
+            output.append(create_led_for_status_code(status_code, home_colour))
+    return output
+
+
 def create_led_for_status_code(status_code, home_colour):
     output = {}
     output['colours'] = []
@@ -85,46 +94,41 @@ def create_led_for_status_code(status_code, home_colour):
 
 def show_all_line_statuses(leds, statuses):
     repeat = len(statuses)
-    for i, status in enumerate(statuses):
-        home_colour = LINE_COLOURS[status.affected_lines[0]]
-        light = create_led_for_status_code(status.status_code, home_colour)
-        if light['offset'] is not None:
-            offset = light['offset']
-        else:
-            offset = i/repeat
+    all_lights = []
+    for status in statuses:
+        all_lights += create_leds_for_status(status)
+    repeat = len(all_lights)
+    for i, light in enumerate(all_lights):
         leds.set_pixel(i,
                        colours=light['colours'],
                        modifier=light['modifier'],
                        duration=light['duration'],
-                       offset=offset,
+                       offset=light['offset'] or (i / repeat),
                        repeat=repeat)
 
 
-def _play_sequence(leds, statuses, start_and_end_status):
+def _play_sequence(leds, statuses, summary_seconds=None):
     for status in statuses:
         start_time = time()
         expected_duration_s = status.duration_ms / 1000
-        repeat = len(status.affected_lines)
-        for i, line_id in enumerate(status.affected_lines):
-            home_colour = LINE_COLOURS[line_id]
-            light = create_led_for_status_code(status.status_code, home_colour)
-            log.info('Showing status %s for the %s line for %s seconds',
-                     status.status_code,
-                     line_id,
-                     expected_duration_s)
+        light_list = create_leds_for_status(status)
+        repeat = len(light_list)
+        for i, light in enumerate(light_list):
             leds.set_pixel(i,
                            colours=light['colours'],
                            modifier=light['modifier'],
                            duration=light['duration'],
-                           offset=light['offset'] or 0,
+                           offset=light['offset'] or (i / repeat),
                            repeat=repeat)
-        sleep(expected_duration_s - (time() - start_time))
-    show_all_line_statuses(leds, start_and_end_status)
-    sleep(3)
+        sleep(max(expected_duration_s - (time() - start_time), 0))
+
+    if summary_seconds:
+        show_all_line_statuses(leds, statuses)
+        sleep(summary_seconds)
 
 
-def play_a_sequence(leds, statuses, start_and_end_status):
-    thread = Thread(target=_play_sequence, args=(leds, statuses, start_and_end_status))
+def play_a_sequence(leds, statuses, summary_seconds=None):
+    thread = Thread(target=_play_sequence, args=(leds, statuses, summary_seconds))
     thread.start()
 
 
@@ -146,15 +150,15 @@ if __name__ == '__main__':
 
     log.info('Hello')
     timestamp = strftime('%Y%m%d_%H%M%S')
-    statuses = tfl.map_status_to_model(tfl.TflApi().update_status(timestamp))
-    audio_statuses = speech.generate_audio_files(statuses, timestamp)
+    statuses = tfl.TflApi().update_status(timestamp)
+    audio_statuses = speech.generate_phrases_for_status(statuses)
+    for s in audio_statuses:
+        s.duration_ms = 5000
 
     log.info('Starting LEDs')
     leds = start_leds()
-    play_a_sequence(leds, audio_statuses)
-    log.info('play_a_sequence returned')
+    play_a_sequence(leds, audio_statuses, 10)
 
-    show_all_line_statuses(leds, statuses)
     try:
         while True:
             sleep(1)

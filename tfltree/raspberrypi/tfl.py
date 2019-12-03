@@ -42,24 +42,49 @@ class TflApi:
 
 
 def _just_status_codes(status_model):
-    return [s.status_code for s in status_model]
+    return [s.status_codes for s in status_model]
 
 
 def _map_status_to_model(status):
     output = []
+    reasons = []
     for line in status:
+        line_id = line['id']
         for s in line['lineStatuses']:
-            output.append(LineStatus(
-                affected_lines=[line['id']],
-                raw_status=s,
-                status_code=s['statusSeverity']
-            ))
+            reason = s['statusSeverityDescription']
+            if 'reason' in s:
+                reason = _remove_line_name_from_reason(s['reason'])
+            status_code = s['statusSeverity']
+            if reason in reasons:
+                # Identical message found: merge its details
+                line_status_index = reasons.index(reason)
+                output[line_status_index].affected_lines.add(line_id)
+                output[line_status_index].status_codes.add(status_code)
+            else:
+                output.append(LineStatus(
+                    affected_lines=set([line_id]),
+                    reason=reason,
+                    status_codes=set([status_code])
+                ))
+                reasons.append(reason)
+    # If there is good service, move it to the end
+    if 'Good Service' in reasons:
+        output.append(output.pop(reasons.index('Good Service')))
+    # Return a list of deduplicated LineStatus objects
     return output
+
+
+def _remove_line_name_from_reason(message):
+    index = message.lower().find('line: ')
+    if index >= 0:
+        return message[index + 6:]
+    else:
+        return message
 
 
 if __name__ == '__main__':
     API = TflApi()
     status = API.update_status()
+    status2 = API.update_status()
     log.debug(status)
-    model = _map_status_to_model(status)
-    log.debug(model)
+    log.debug(API.has_status_changed())

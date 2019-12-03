@@ -4,6 +4,7 @@ from tempfile import mkstemp
 from pymediainfo import MediaInfo
 from tfltree import logger as log
 from tfltree.raspberrypi import LineStatus
+from tfltree.raspberrypi.tfl import _remove_line_name_from_reason
 
 
 TUBE_ID_TO_NAME = {
@@ -29,6 +30,14 @@ def map_tube_id_to_name(tube_id):
         return tube_id
 
 
+def map_tube_id_to_name_plural(tube_id_set):
+    id_list = sorted(list(tube_id_set))
+    name_list = list(map(map_tube_id_to_name, id_list))
+    if len(name_list) == 1:
+        return name_list[0] + ' Line'
+    return ', '.join(name_list[:-1]) + ' and ' + name_list[-1] + ' Lines'
+
+
 def generate_audio_files(line_statuses, timestamp):
     audio_statuses = generate_phrases_for_status(line_statuses)
     for index, line_status in enumerate(audio_statuses):
@@ -45,22 +54,22 @@ def generate_audio_files(line_statuses, timestamp):
 
 def generate_phrases_for_status(line_statuses):
     output_statuses = []
-    good_lines = []
+    good_lines = set()
     for line_status in line_statuses:
         disruption_phrase = _generate_disruption_phrase(line_status)
         line_status.phrase = disruption_phrase
         if disruption_phrase:
             output_statuses.append(line_status)
         else:
-            good_lines.append(line_status.affected_lines[0])
+            good_lines.update(line_status.affected_lines)
     if len(output_statuses) == 0:
         return [LineStatus(affected_lines=good_lines,
                            phrase='There is a good service on all London Underground lines.',
-                           status_code=10)]
+                           status_codes=set([10]))]
     if good_lines:
         output_statuses.append(LineStatus(affected_lines=good_lines,
                                           phrase=_generate_good_line_phrase(good_lines),
-                                          status_code=10)
+                                          status_codes=set([10]))
                                )
     return output_statuses
 
@@ -80,82 +89,68 @@ def speech_duration_ms(filename):
 
 
 def _generate_good_line_phrase(good_lines):
-    line_names = list(map(map_tube_id_to_name, good_lines))
-    if len(line_names) == 1:
-        return 'There is a good service on the %s line.' % line_names[0]
-    elif len(line_names) == 2:
-        return 'There is a good service on the %s and %s lines.' % (line_names[0], line_names[1])
-    elif len(line_names) == 3:
-        return 'There is a good service on the %s, %s and %s lines.' % (line_names[0], line_names[1], line_names[2])
-    elif len(line_names) > 3:
+    if len(good_lines) > 3:
         return 'There is a good service on all other lines.'
 
-
-def _generate_disruption_phrase_for_status_code(line_id, line_status):
-    line_name = map_tube_id_to_name(line_id)
-    severity = line_status.status_code
-    if 'reason' in line_status.raw_status:
-        reason = line_status.raw_status['reason']
-    else:
-        reason = None
-
-    if severity == 0:
-        message = 'The %s Line is running a special service.' % line_name
-    elif severity == 1 or severity == 20:
-        message = 'The %s Line is closed.' % line_name
-    elif severity == 2:
-        message = 'The %s Line is suspended.' % line_name
-    elif severity == 3:
-        message = 'The %s Line is part suspended.' % line_name
-    elif severity == 4:
-        message = 'There is a planned closure on the %s Line.' % line_name
-    elif severity == 5:
-        message = 'There is a partial closure on the %s Line.' % line_name
-    elif severity == 6:
-        message = 'There are severe delays on the %s Line.' % line_name
-    elif severity == 7:
-        message = 'The %s Line is running a reduced service.' % line_name
-    elif severity == 8:
-        message = 'The %s Line is operating as a bus service.' % line_name
-    elif severity == 9:
-        message = 'There are minor delays on the %s Line.' % line_name
-    elif severity == 10:
-        return None
-    elif severity == 11:
-        message = 'The %s Line is part closed.' % line_name
-    elif severity == 12:
-        message = 'The %s Line is exit only.' % line_name
-    elif severity == 13:
-        message = 'The %s Line has no step free access.' % line_name
-    elif severity == 14:
-        message = 'There is a change of frequency on the %s Line.' % line_name
-    elif severity == 15:
-        message = 'The %s Line is being diverted.' % line_name
-    elif severity == 16:
-        message = 'The %s Line is not running.' % line_name
-    elif severity == 17:
-        message = 'There are issues reported on the %s Line.' % line_name
-    elif severity == 18:
-        message = 'There are no issues on the %s Line.' % line_name
-    elif severity == 19:
-        message = 'Information about the %s Line.' % line_name
-    else:
-        return None
-
-    if reason:
-        return '%s %s' % (message, _remove_line_name_from_reason(reason))
-    else:
-        return message
+    line_names = map_tube_id_to_name_plural(good_lines)
+    return 'There is a good service on the %s.' % line_names[0]
 
 
 def _generate_disruption_phrase(line_status):
-    line_name = line_status.affected_lines[0]
-    return _generate_disruption_phrase_for_status_code(line_name, line_status)
+    plural = len(line_status.affected_lines) > 1
+    many_issues = len(line_status.status_codes) > 1
+    line_name = map_tube_id_to_name_plural(line_status.affected_lines)
+    is_are = 'are' if plural else 'is'
 
+    if many_issues:
+        message = 'There are multiple issues on the %s.' % line_name
+    else:
+        severity = list(line_status.status_codes)[0]
 
-def _remove_line_name_from_reason(message):
-    index = message.lower().find('line: ')
-    if index >= 0:
-        return message[index + 6:]
+        if severity == 0:
+            message = 'The %s %s running a special service.' % (line_name, is_are)
+        elif severity == 1 or severity == 20:
+            message = 'The %s %s closed.' % (line_name, is_are)
+        elif severity == 2:
+            message = 'The %s %s suspended.' % (line_name, is_are)
+        elif severity == 3:
+            message = 'The %s %s part suspended.' % (line_name, is_are)
+        elif severity == 4:
+            message = 'There is a planned closure on the %s.' % line_name
+        elif severity == 5:
+            message = 'There is a partial closure on the %s.' % line_name
+        elif severity == 6:
+            message = 'There is disruption on the %s.' % line_name
+        elif severity == 7:
+            message = 'The %s %s running a reduced service.' % (line_name, is_are)
+        elif severity == 8:
+            message = 'The %s %s operating as a bus service.' % (line_name, is_are)
+        elif severity == 9:
+            message = 'There is disruption on the %s.' % line_name
+        elif severity == 10:
+            return None
+        elif severity == 11:
+            message = 'The %s %s part closed.' % (line_name, is_are)
+        elif severity == 12:
+            message = 'The %s %s exit only.' % (line_name, is_are)
+        elif severity == 13:
+            message = 'The %s has no step free access.' % line_name
+        elif severity == 14:
+            message = 'There is a change of frequency on the %s.' % line_name
+        elif severity == 15:
+            message = 'The %s %s being diverted.' % (line_name, is_are)
+        elif severity == 16:
+            message = 'The %s %s not running.' % (line_name, is_are)
+        elif severity == 17:
+            message = 'There are issues reported on the %s.' % line_name
+        elif severity == 18:
+            message = 'There are no issues on the %s.' % line_name
+        elif severity == 19:
+            message = 'Information about the %s.' % line_name
+        else:
+            return None
+
+    if line_status.reason:
+        return '%s %s' % (message, line_status.reason)
     else:
         return message

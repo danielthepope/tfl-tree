@@ -25,8 +25,8 @@ def main():
             total_duration = sum([f.duration_ms for f in audio_statuses])
             log.info('Total duration: %sms', total_duration)
             subtitle_file = subtitle.convert_to_srt_file(audio_statuses, timestamp)
-            lights.play_a_sequence(leds, audio_statuses, status)
-            video_file = camera.record_for_seconds(total_duration/1000 + 3, timestamp)
+            lights.play_a_sequence(leds, audio_statuses, 10)
+            video_file = camera.record_for_seconds(total_duration/1000 + 10, timestamp)
             audio_filenames = [f.file_path for f in audio_statuses]
             lights.lamp_off()
             status_light.blink()

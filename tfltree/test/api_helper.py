@@ -49,14 +49,4 @@ STATUS_DESCRIPTIONS = {
 
 
 def create_test_line_status(status_code, message):
-    output = {
-        '$type': 'Tfl.Api.Presentation.Entities.LineStatus, Tfl.Api.Presentation.Entities',
-        'id': 0,
-        'lineId': 'piccadilly',
-        'statusSeverity': status_code,
-        'statusSeverityDescription': STATUS_DESCRIPTIONS[status_code],
-        'created': '0001-01-01T00:00:00'
-    }
-    if message:
-        output['reason'] = message
-    return LineStatus(affected_lines=['piccadilly'], raw_status=output, status_code=status_code)
+    return LineStatus(affected_lines=set(['piccadilly']), reason=message, status_codes=set([status_code]))

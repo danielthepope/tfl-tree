@@ -18,14 +18,14 @@ def flatten(list_of_lists):
     output = []
     for l in list_of_lists:
         output += l
-    return list(set(output))
+    return sorted(list(set(output)))
 
 
 def generate_tweet_text(audio_statuses):
-    delayed_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [6, 9]])
-    closed_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [1, 2, 3, 4, 5, 11, 20]])
-    info_lines = flatten([s.affected_lines for s in audio_statuses if s.status_code in [
-                         0, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18, 19]])
+    delayed_lines = flatten([s.affected_lines for s in audio_statuses if s.status_codes.issubset({6, 9})])
+    closed_lines = flatten([s.affected_lines for s in audio_statuses if s.status_codes.issubset({1, 2, 3, 4, 5, 11, 20})])
+    info_lines = flatten([s.affected_lines for s in audio_statuses if s.status_codes.issubset(
+        {0, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18, 19})])
 
     output = 'London Underground status:\n'
     if delayed_lines or closed_lines or info_lines:
