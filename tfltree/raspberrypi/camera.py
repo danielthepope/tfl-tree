@@ -26,7 +26,7 @@ class Camera:
 
     @timeit
     def _record_h264(self, seconds, timestamp):
-        (fd, path) = mkstemp('.h264', 'tfltree_video_%s_' % timestamp)
+        (fd, path) = mkstemp('.h264', 'tfltree_%s_' % timestamp)
         status_light.on()
         log.debug('Recording for %s seconds', seconds)
         self.camera.start_recording(path)

@@ -26,7 +26,7 @@ class TflApi:
             self.status = _map_status_to_model(json.loads(response_text))
             log.info('Loaded status successfully')
             if self.has_status_changed():
-                (fd, path) = mkstemp('.json', 'tfltree_api_%s_' % timestamp)
+                (fd, path) = mkstemp('.json', 'tfltree_%s_' % timestamp)
                 with open(fd, 'w') as f:
                     f.write(response_text)
                     log.debug('Wrote API response to %s', path)
