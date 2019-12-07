@@ -27,8 +27,7 @@ LINE_COUNT = len(LINE_COLOURS.keys())
 
 def start_leds():
     leds = led.LedFactory().create(LED_ENDPOINT)
-    if hasattr(leds, 'start'):  # TODO remove after led-server 0.0.5
-        leds.start()
+    leds.start()
     default_sequence(leds)
     return leds
 

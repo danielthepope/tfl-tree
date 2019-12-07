@@ -6,7 +6,7 @@ setup(
     packages=['tfltree', 'tfltree.raspberrypi'],
     install_requires=[
         'gpiozero==1.5.0',
-        'led-server @ https://github.com/danielthepope/led-server/tarball/0.0.4',
+        'led-server @ https://github.com/danielthepope/led-server/tarball/0.0.5',
         'pymediainfo==4.0',
         'python-dotenv==0.10.3',
         'python-twitter @ https://github.com/danielthepope/python-twitter/archive/feature/subtitles.zip',
