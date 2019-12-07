@@ -55,18 +55,21 @@ def post_video(tweet_text, video_file, subtitle_file):
         api.PostMediaSubtitlesCreate(video_id, subtitle_id, 'en', 'English')
         log.debug('Successfully associated video with subtitles')
         attempts = 0
+        twitter_error = None
         while attempts < 15:
             try:
                 status = api.PostUpdate(tweet_text, media=video_id)
                 log.info('Uploaded to Twitter successfully!')
                 log.debug(status)
                 return
-            except TwitterError:
+            except TwitterError as e:
                 attempts += 1
                 log.warn('Error from Twitter after %s attempts. Trying a bit later', attempts)
                 sleep(5)
+                twitter_error = e
         # Exceeded the maximum attempts
         log.error('Twitter upload exceeded the maximum number of attempts. Giving up.')
+        log.error(twitter_error)
 
     else:
         log.warning('Twitter upload not enabled. Requires API tokens.')
