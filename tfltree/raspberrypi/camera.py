@@ -13,6 +13,7 @@ class Camera:
     def __init__(self):
         self.camera = picamera.PiCamera()
         self.camera.resolution = (720, 720)
+        self.camera.awb_mode = 'sunlight'
         # Warm up
         status_light.blink()
         sleep(2)
