@@ -93,7 +93,7 @@ def _generate_good_line_phrase(good_lines):
         return 'There is a good service on all other lines.'
 
     line_names = map_tube_id_to_name_plural(good_lines)
-    return 'There is a good service on the %s.' % line_names[0]
+    return 'There is a good service on the %s.' % line_names
 
 
 def _generate_disruption_phrase(line_status):
