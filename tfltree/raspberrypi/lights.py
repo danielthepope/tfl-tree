@@ -1,4 +1,5 @@
 import os
+import random
 from time import sleep, time
 from threading import Thread
 
@@ -16,7 +17,7 @@ LINE_COLOURS = {
     'hammersmith-city': [244, 169, 190],
     'jubilee': [161, 165, 167],
     'metropolitan': [155, 0, 88],
-    'northern': [10, 10, 10],  # hmmm
+    'northern': [30, 30, 30],  # hmmm
     'piccadilly': [0, 25, 168],
     'victoria': [0, 152, 216],
     'waterloo-city': [147, 206, 186]
@@ -79,10 +80,12 @@ def create_led_for_status_code(status_code, home_colour):
         output['duration'] = 1
     elif status_code == 10:
         # Good service
+        output['colours'].append(led.lerp_colour([0, 0, 0], home_colour, 0.6))
         output['colours'].append(home_colour)
-        output['modifier'] = 'sparkle'
-        output['offset'] = 0.05
-        # output['offset'] = random.random() * 42 # Use for 'noise' modifier
+        output['colours'].append(led.lerp_colour([0, 0, 0], home_colour, 0.6))
+        output['modifier'] = 'noise'
+        output['offset'] = random.random() * 42  # Use for 'noise' modifier
+        output['duration'] = 0.4
     else:
         output['colours'].append(led.lerp_colour([0, 0, 0], home_colour, 0.3))
         output['colours'].append(home_colour)
