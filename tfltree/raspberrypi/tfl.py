@@ -42,7 +42,15 @@ class TflApi:
 
 
 def _just_status_codes(status_model):
-    return [s.status_codes for s in status_model]
+    output = {}
+    for entry in status_model:
+        for key in entry.affected_lines:
+            for code in entry.status_codes:
+                if key in output:
+                    output[key].add(code)
+                else:
+                    output[key] = {code}
+    return output
 
 
 def _map_status_to_model(status):
