@@ -80,9 +80,9 @@ def create_led_for_status_code(status_code, home_colour):
         output['duration'] = 1
     elif status_code == 10:
         # Good service
-        output['colours'].append(led.lerp_colour([0, 0, 0], home_colour, 0.6))
+        output['colours'].append(led.lerp_colour([0, 0, 0], home_colour, 0.4))
         output['colours'].append(home_colour)
-        output['colours'].append(led.lerp_colour([0, 0, 0], home_colour, 0.6))
+        output['colours'].append(led.lerp_colour([0, 0, 0], home_colour, 0.4))
         output['modifier'] = 'noise'
         output['offset'] = random.random() * 42  # Use for 'noise' modifier
         output['duration'] = 0.4
