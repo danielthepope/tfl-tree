@@ -1,4 +1,5 @@
 from time import sleep, strftime
+import traceback
 
 from tfltree import logger as log
 from tfltree.raspberrypi import lights, speech, status_light, subtitle, tweets, video
@@ -6,6 +7,25 @@ from tfltree.raspberrypi.camera import Camera
 from tfltree.raspberrypi.tfl import TflApi
 
 API = TflApi()
+
+
+def record_and_tweet(leds, camera, status, timestamp):
+    lights.lamp_on()
+    audio_statuses = speech.generate_audio_files(status, timestamp)
+    log.debug('Audio files: %r', audio_statuses)
+    total_duration = sum([f.duration_ms for f in audio_statuses])
+    log.info('Total duration: %sms', total_duration)
+    subtitle_file = subtitle.convert_to_srt_file(audio_statuses, timestamp)
+    lights.play_a_sequence(leds, audio_statuses, 10)
+    video_file = camera.record_for_seconds(total_duration/1000 + 10, timestamp)
+    audio_filenames = [f.file_path for f in audio_statuses]
+    lights.lamp_off()
+    status_light.blink()
+    log.info('Packaging MP4')
+    packaged_file = video.package_mp4(video_file, audio_filenames, timestamp)
+    status_light.blink(0.9, 0.1)
+    tweet_text = tweets.generate_tweet_text(audio_statuses)
+    tweets.post_video(tweet_text, packaged_file, subtitle_file)
 
 
 def main():
@@ -19,22 +39,18 @@ def main():
         if API.has_status_changed():
             log.info('Status is different')
             log.debug(status)
-            lights.lamp_on()
-            audio_statuses = speech.generate_audio_files(status, timestamp)
-            log.debug('Audio files: %r', audio_statuses)
-            total_duration = sum([f.duration_ms for f in audio_statuses])
-            log.info('Total duration: %sms', total_duration)
-            subtitle_file = subtitle.convert_to_srt_file(audio_statuses, timestamp)
-            lights.play_a_sequence(leds, audio_statuses, 10)
-            video_file = camera.record_for_seconds(total_duration/1000 + 10, timestamp)
-            audio_filenames = [f.file_path for f in audio_statuses]
-            lights.lamp_off()
-            status_light.blink()
-            log.info('Packaging MP4')
-            packaged_file = video.package_mp4(video_file, audio_filenames, timestamp)
-            status_light.blink(0.9, 0.1)
-            tweet_text = tweets.generate_tweet_text(audio_statuses)
-            tweets.post_video(tweet_text, packaged_file, subtitle_file)
+            failures = 0
+            while failures < 3:
+                try:
+                    record_and_tweet(leds, camera, status, timestamp)
+                    break
+                except Exception:
+                    failures += 1
+                    log.error('Some unexpected exception happened')
+                    log.error(traceback.format_exc())
+                    log.error('Trying again')
+            if failures == 3:
+                log.error('Giving up after 3 attempts')
             status_light.blink(0.02, 9.98)
             sleep(1200)
         else:

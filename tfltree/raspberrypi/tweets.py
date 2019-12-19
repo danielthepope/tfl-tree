@@ -69,7 +69,7 @@ def post_video(tweet_text, video_file, subtitle_file):
                 twitter_error = e
         # Exceeded the maximum attempts
         log.error('Twitter upload exceeded the maximum number of attempts. Giving up.')
-        log.error(twitter_error)
+        raise twitter_error
 
     else:
         log.warning('Twitter upload not enabled. Requires API tokens.')
