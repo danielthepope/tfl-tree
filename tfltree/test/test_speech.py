@@ -175,6 +175,6 @@ class TestSpeech(TestCase):
         self.assertEqual(actual, 'The Piccadilly Line is closed.')
 
     def test_pico_convert(self):
-        actual = speech.convert_to_pico_text('The Hammersmith & City Line is closed.')
-        expected = 'The Hammersmith and City Line is closed.'
+        actual = speech.convert_to_pico_text('The Hammersmith & City Line is closed Hammersmith - Wood Lane until 1200 hrs.')
+        expected = 'The Hammersmith and City Line is closed Hammersmith to Wood Lane until 12 hundred hours.'
         self.assertEqual(actual, expected)

@@ -1,11 +1,13 @@
+import re
 import subprocess
 from tempfile import mkstemp
 
 from pymediainfo import MediaInfo
 from tfltree import logger as log
 from tfltree.raspberrypi import LineStatus
-from tfltree.raspberrypi.tfl import _remove_line_name_from_reason
 
+
+RE_HOURS = re.compile(r'(\d\d)\.?(\d\d)')
 
 TUBE_ID_TO_NAME = {
     'bakerloo': 'Bakerloo',
@@ -75,7 +77,8 @@ def generate_phrases_for_status(line_statuses):
 
 
 def convert_to_pico_text(text):
-    return text.replace('&', 'and')
+    output = RE_HOURS.sub(r'\1 \2', text)
+    return output.replace('&', 'and').replace(' - ', ' to ').replace(' hrs', ' hours').replace(' 00', ' hundred')
 
 
 def generate_speech(filename, text):
